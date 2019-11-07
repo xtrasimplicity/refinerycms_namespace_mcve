@@ -101,3 +101,20 @@ Traceback (most recent call last):
          1: from /home/xtrasimplicity/.rbenv/versions/2.5.0/lib/ruby/gems/2.5.0/gems/refinerycms-core-4.0.3/lib/refinery/extension_generation.rb:401:in `read'
 /home/xtrasimplicity/.rbenv/versions/2.5.0/lib/ruby/gems/2.5.0/gems/refinerycms-core-4.0.3/lib/refinery/extension_generation.rb:401:in `read': No such file or directory @ rb_sysopen - /tmp/refinerycms-extension-my_group-mcve/vendor/extensions/my_group/config/locales/es.yml (Errno::ENOENT)
 ```
+
+## Temporary work-around
+It looks like the generator is failing to move the files from the `tmp` folders it creates, despite there not being any conflicting files.
+
+Simply moving these files out of their `tmp` folder and into the parent, resolves the issue. i.e.
+```bash
+cd vendor/extensions/*extension_name*
+mv lib/tmp/* lib/
+mv config/locales/tmp/* config/locales/
+mv config/tmp/* config/
+rmdir lib/tmp
+rmdir config/locales/tmp
+rmdir config/tmp
+```
+then, re-run the generate command.
+
+You'll end up with some duplicate files (such as DB migrations), but these can easily be removed.
